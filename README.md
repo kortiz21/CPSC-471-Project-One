@@ -17,4 +17,4 @@ Anna Chiu: anna.chiu@csu.fullerton.edu
 
 # Executing program
 
-# Anything special about your submission that we should take note of.
+# Dependencies
