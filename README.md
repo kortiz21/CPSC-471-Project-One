@@ -1,6 +1,6 @@
 # CPSC-471-Project-One
 
-# Authors
+# Authors:
 
 Kevin Ortiz: keortiz@csu.fullerton.edu  
 
@@ -13,8 +13,9 @@ Ethan Bockler: ethanbockler@gmail.com
 Anna Chiu: anna.chiu@csu.fullerton.edu  
 
 
-# Programming language: C++
+# Programming language: 
+C++
 
-# Executing program
+# Executing program:
 
-# Dependencies
+# Dependencies:
