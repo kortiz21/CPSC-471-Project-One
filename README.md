@@ -1,5 +1,7 @@
 # CPSC-471-Project-One
 
+# Authors
+
 Kevin Ortiz: keortiz@csu.fullerton.edu  
 
 Ben Martinez: benmrtnz27@gmail.com  
@@ -11,8 +13,8 @@ Ethan Bockler: ethanbockler@gmail.com
 Anna Chiu: anna.chiu@csu.fullerton.edu  
 
 
-Programming language: C++
+# Programming language: C++
 
-– How to execute your program.
+# Executing program
 
-– Anything special about your submission that we should take note of.
+# Anything special about your submission that we should take note of.
