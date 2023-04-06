@@ -14,7 +14,7 @@ Anna Chiu: anna.chiu@csu.fullerton.edu
 
 
 # Programming language: 
-C++
+Python
 
 # Executing program:
 
