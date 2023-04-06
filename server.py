@@ -3,7 +3,7 @@
 import socket			
 
 # next create a socket object
-s = socket.socket()		
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)		
 print ("Socket successfully created")
 
 # reserve a port on your computer in our
