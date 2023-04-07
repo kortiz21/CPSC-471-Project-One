@@ -1,8 +1,10 @@
 # Client code
-# Import socket module
+
+# Import necessary modules
 import socket			
 import sys
 
+# Get the arguments from the command line
 if len(sys.argv) == 3:
     ip = str(sys.argv[1])
     port = int(sys.argv[2])
@@ -10,24 +12,23 @@ else:
     sys.exit("Format: python client.py <ip address> <port>")
 
 # Create a TCP socket object
-clientSock = socket.socket()		
+controlSock = socket.socket()		
 			
 # connect to the server on local computer
-clientSock.connect((ip, port))
+controlSock.connect((ip, port))
 
-# receive data from the server and decoding to get the string.
-print (clientSock.recv(1024).decode())
-# close the connection
+# Function to save the file
+def saveFile(fileName, fileData):
+    # Open the file for writing
+    fileObj = open(fileName, "wb")
+    
+    # Write the data to the file
+    fileObj.write(fileData)
+    
+    # Close the file
+    fileObj.close()
 
-# def create_data_socket():
-#     # ephemeral_port = int(client.recv(1024).decode())
-#     data_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-#     # Bind the socket to port 0 (ephemeral port)
-#     data_socket.bind(('', 0))
-
-#     return data_socket
-
+# Getting the data from the server
 def recvAll(sock, numBytes):
     recvBuff = b''
     while len(recvBuff) < numBytes:
@@ -36,32 +37,145 @@ def recvAll(sock, numBytes):
             break
         recvBuff += tmpBuff
     return recvBuff
+
+# Sending the data to the server
+def sendData(dataSock, fileObj):
+    # The number of bytes sent
+    numSent = 0
+
+    # Total number of bytes
+    totalNumSent = 0
+
+    # The file data
+    fileData = None
+
+    # Keep sending until all is sent
+    while True:
         
+        # Read 65536 bytes of data
+        fileData = fileObj.read(65536)
         
+        # Make sure we did not hit EOF
+        if fileData:
+            # Get the size of the data read
+            # and convert it to string
+            dataSizeStr = str(len(fileData))
+            
+            # Prepend 0's to the size string
+            # until the size is 10 bytes
+            while len(dataSizeStr) < 10:
+                dataSizeStr = "0" + dataSizeStr
+        
+
+            # Convert the dataSizeStr to bytes
+            dataSizeBytes = dataSizeStr.encode()
+            
+            # Prepend the size of the data to the
+            # file data.
+            fileData = dataSizeBytes + fileData
+            
+            # The number of bytes sent
+            numSent = 0
+            
+            # Send the data!
+            while len(fileData) > numSent:
+                numSent += dataSock.send(fileData[numSent:])
+
+            totalNumSent += numSent
+
+        # The file has been read. We are done
+        else:
+            break
+        
+    # Display the filename and the number of bytes sent
+    print(f"Filename: {fileName}")
+    print(f"File Size: {totalNumSent} bytes")
+
+# Connecting to the data socket
+def connectDataSock(controlSock):
+    dataPort = controlSock.recv(1024).decode()
+    print(f"Data Socket Port: {dataPort}")
+    dataSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    dataSock.connect((ip, int(dataPort)))
+
+    return dataSock
+
+# Main loop
 while True:
-    # send a thank you message to the client. encoding to send byte type.
-    userInput = input("ftp> ")
+    # Get user input
+    userInput = input("\nftp> ")
     inputList = userInput.split()
 
-    if inputList[0] == "get":
-        clientSock.send(userInput.encode())
-
-        fileSizeBuff = recvAll(clientSock, 10)
+    # If user enters get 
+    if inputList[0] == "get" and len(inputList) == 2:
+        controlSock.send(userInput.encode())
+        
+        # Break if file not found
+        try:
+            dataSock = connectDataSock(controlSock)
+        except:
+            print("File not found")
+            break
+        
+        fileSizeBuff = recvAll(dataSock, 10)
+        
         fileSize = int(fileSizeBuff.decode())
 
-        print("The file size is", fileSize)
+        fileName = inputList[1]
 
-        fileData = recvAll(clientSock, fileSize)
+        # Display file information
+        print(f"Filename: {fileName}")
+        print(f"File Size: {fileSize} bytes")
 
-        print("The file data is:")
-        print(fileData.decode())
-		
-    elif userInput == "exit":
+        fileData = recvAll(dataSock, fileSize)
+        newFile = "fmserv_"+fileName
+        saveFile(newFile, fileData)
+        print(f"File Data stored in: {newFile}")
+
+        # Close data socket once complete
+        dataSock.close()
+
+    # If user enters put 
+    elif inputList[0] == "put" and len(inputList) == 2:
+        controlSock.send(userInput.encode())
+
+        dataSock = connectDataSock(controlSock)
+
+        fileName = inputList[1]
+        
+        # Open the file
+        try:
+            fileObj = open(fileName, "rb")
+        except IOError:
+            print("File not found")
+            break
+
+        sendData(dataSock, fileObj)
+
+        # Close data socket once complete
+        dataSock.close()
+
+    # If user enters ls 
+    elif inputList[0] == "ls" and len(inputList) == 1:
+        controlSock.send(userInput.encode())
+
+        dataSock = connectDataSock(controlSock)
+        
+        files = dataSock.recv(1024).decode()
+        print("Files on the server:")
+        print(files)
+
+        # Close data socket once complete
+        dataSock.close()
+
+    # If user enters quit 
+    elif inputList[0] == "quit" and len(inputList) == 1:
+        controlSock.send(userInput.encode())
+        # Close the control socket
+        controlSock.close()	
         break
     
     else:
-        clientSock.send(userInput.encode())
-        # print (s.recv(1024).decode())
+        print("FAILED: Invalid command.")
 
-clientSock.close()	
-
+controlSock.close()	
