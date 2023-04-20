@@ -82,7 +82,6 @@ def sendData(dataSock, fileObj):
             # Get the size of the data read
             # and convert it to string
             dataSizeStr = str(len(fileData))
-            
             # Prepend 0's to the size string
             # until the size is 10 bytes
             while len(dataSizeStr) < 10:
@@ -96,7 +95,7 @@ def sendData(dataSock, fileObj):
             # file data.
             fileData = dataSizeBytes + fileData
             
-            # The number of bytes sent
+            # # The number of bytes sent
             numSent = 0
             
             # Send the data!
@@ -131,7 +130,7 @@ while True:
                 fileObj = open(fileName, "rb")
             except IOError:
                 print("FAILURE: File not found")
-                break
+                
 
             # Create the data socket using ephemeral port
             dataSock = ephemeralPort(controlSock)
