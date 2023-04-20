@@ -1,3 +1,10 @@
+# Authors: 
+# Anthony Maida: amaida@csu.fullerton.edu
+# Kevin Ortiz: keortiz@csu.fullerton.edu
+# Ben Martinez: benmrtnz27@gmail.com
+# Ethan Bockler: ethanbockler@gmail.com
+# Anna Chiu: anna.chiu@csu.fullerton.edu
+
 # Client code
 
 # Import necessary modules
