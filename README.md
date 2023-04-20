@@ -20,7 +20,7 @@ Python 3: We used python 3.10 for testing.
 
 There are two python programs, `server.py` and `client.py`
 We used python3 when executing, but it depends on how you execute your python programs.
-Dont include <> when writing the port number. Just put the number.
+Dont include <> when writing the port number or IP address. Just put the number.
 
 Start the `server.py` by typing `python3 server.py <port number>`.
 Ex. `python3 server.py 8000`
